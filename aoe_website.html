@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AOE — All Add Online Exchange</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; }
+  .navbar { background: #002F34; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .logo { color: #fff; font-size: 22px; font-weight: 700; line-height: 1.1; cursor: pointer; }
+  .logo span { color: #23E5DB; }
+  .logo small { display: block; font-size: 10px; font-weight: 400; color: #aaa; letter-spacing: 1px; }
+  .search-bar { display: flex; flex: 1; min-width: 200px; background: #fff; border-radius: 4px; overflow: hidden; }
+  .search-bar input { flex: 1; border: none; outline: none; padding: 8px 12px; font-size: 14px; }
+  .search-bar button { background: #23E5DB; border: none; padding: 8px 16px; cursor: pointer; font-size: 14px; font-weight: 600; color: #002F34; }
+  .sell-btn { background: transparent; border: 2px solid #23E5DB; color: #23E5DB; padding: 6px 18px; border-radius: 24px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .sell-btn:hover { background: #23E5DB; color: #002F34; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .hero { background: linear-gradient(135deg, #002F34, #004D4A); padding: 30px 20px; text-align: center; }
+  .hero h1 { color: #fff; font-size: 24px; margin-bottom: 6px; }
+  .hero h1 span { color: #23E5DB; }
+  .hero p { color: #aed8d6; font-size: 13px; }
+  .categories { background: #fff; padding: 16px 20px; border-bottom: 1px solid #eee; }
+  .categories h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 8px; }
+  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+  .cat-item:hover { border-color: #002F34; background: #f0fafa; }
+  .cat-icon { font-size: 24px; }
+  .cat-label { font-size: 11px; color: #666; text-align: center; }
+  .section { padding: 16px 20px; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .section-header h2 { font-size: 15px; font-weight: 600; }
+  .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+  .ad-card { background: #fff; border: 1px solid #eee; border-radius: 10px; overflow: hidden; cursor: pointer; }
+  .ad-card:hover { border-color: #002F34; }
+  .ad-img { width: 100%; height: 110px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 38px; }
+  .ad-body { padding: 8px 10px 10px; }
+  .ad-price { font-size: 15px; font-weight: 700; color: #222; }
+  .ad-title { font-size: 12px; color: #666; margin: 2px 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ad-meta { font-size: 11px; color: #999; }
+  .no-ads { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+  .loading { text-align: center; padding: 30px; color: #999; font-size: 14px; }
+  .form-page { max-width: 560px; margin: 20px auto; background: #fff; border-radius: 12px; padding: 24px; }
+  .form-page h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #002F34; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: Arial, sans-serif; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #002F34; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .submit-btn { width: 100%; background: #002F34; color: #23E5DB; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+  .submit-btn:hover { background: #004D4A; }
+  .success-msg { background: #e1f5ee; color: #085041; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; display: none; }
+  .error-msg { background: #fcebeb; color: #a32d2d; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; display: none; }
+  .footer { background: #002F34; color: #9ab; padding: 14px 20px; text-align: center; font-size: 12px; margin-top: 20px; }
+  .footer a { color: #23E5DB; margin: 0 8px; text-decoration: none; }
+  .back-btn { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; background:#fff; cursor:pointer; font-size:14px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo" onclick="showPage('home')">
+    <span>AOE</span>
+    <small>ALL ADD ONLINE EXCHANGE</small>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder='Search "Cars, Mobiles, Jobs..."' />
+    <button onclick="searchAds()">🔍 Search</button>
+  </div>
+  <button class="sell-btn" onclick="showPage('post')">+ Sell</button>
+</div>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+  <div class="hero">
+    <h1>India's Free <span>AOE</span> Classifieds</h1>
+    <p>Buy & Sell anything — 100% Free!</p>
+  </div>
+  <div class="categories">
+    <h2>Browse by category</h2>
+    <div class="cat-grid">
+      <div class="cat-item" onclick="filterCategory('Cars')"><div class="cat-icon">🚗</div><span class="cat-label">Cars</span></div>
+      <div class="cat-item" onclick="filterCategory('Mobiles')"><div class="cat-icon">📱</div><span class="cat-label">Mobiles</span></div>
+      <div class="cat-item" onclick="filterCategory('Property')"><div class="cat-icon">🏠</div><span class="cat-label">Property</span></div>
+      <div class="cat-item" onclick="filterCategory('Jobs')"><div class="cat-icon">💼</div><span class="cat-label">Jobs</span></div>
+      <div class="cat-item" onclick="filterCategory('Bikes')"><div class="cat-icon">🛵</div><span class="cat-label">Bikes</span></div>
+      <div class="cat-item" onclick="filterCategory('Electronics')"><div class="cat-icon">📺</div><span class="cat-label">Electronics</span></div>
+      <div class="cat-item" onclick="filterCategory('Furniture')"><div class="cat-icon">🛋️</div><span class="cat-label">Furniture</span></div>
+      <div class="cat-item" onclick="filterCategory('Fashion')"><div class="cat-icon">👗</div><span class="cat-label">Fashion</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <h2 id="adsHeading">Fresh Ads</h2>
+    </div>
+    <div id="adsContainer" class="ads-grid">
+      <div class="loading">Loading ads...</div>
+    </div>
+  </div>
+</div>
+
+<!-- POST AD PAGE -->
+<div id="post" class="page">
+  <div class="form-page">
+    <h2>📢 Post Your Ad — Free!</h2>
+    <div class="success-msg" id="successMsg">✅ Ad posted! Go back to homepage to see it.</div>
+    <div class="error-msg" id="errorMsg">❌ Something went wrong. Please try again.</div>
+    <div class="form-group">
+      <label>Category *</label>
+      <select id="adCategory">
+        <option value="">— Select Category —</option>
+        <option>Cars</option><option>Mobiles</option><option>Property</option>
+        <option>Jobs</option><option>Bikes</option><option>Electronics</option>
+        <option>Furniture</option><option>Fashion</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ad Title *</label>
+      <input type="text" id="adTitle" placeholder="e.g. iPhone 11 64GB Black" />
+    </div>
+    <div class="form-group">
+      <label>Description *</label>
+      <textarea id="adDesc" placeholder="Describe your item..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Price (₹) *</label>
+      <input type="number" id="adPrice" placeholder="e.g. 18500" />
+    </div>
+    <div class="form-group">
+      <label>City / Area *</label>
+      <input type="text" id="adLocation" placeholder="e.g. Hyderabad" />
+    </div>
+    <div class="form-group">
+      <label>Mobile Number *</label>
+      <input type="tel" id="adPhone" placeholder="+91 9876543210" />
+    </div>
+    <button class="submit-btn" onclick="postAd()">Post Ad Free →</button>
+    <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+  </div>
+</div>
+
+<div class="footer">
+  © 2025 AOE — All Add Online Exchange &nbsp;·&nbsp;
+  <a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+  // ============================
+  // PASTE YOUR NEW KEY BELOW 👇
+  // ============================
+  const SUPABASE_URL = 'https://xcrowpltqhlfgqgmbyoj.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_hzYBzBll2swU8OWH-NIpkA_aG8q2Qky';
+  // ============================
+
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const catIcons = { Cars:'🚗', Mobiles:'📱', Property:'🏠', Jobs:'💼', Bikes:'🛵', Electronics:'📺', Furniture:'🛋️', Fashion:'👗' };
+
+  window.showPage = function(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(name).classList.add('active');
+    if (name === 'home') loadAds();
+    window.scrollTo(0, 0);
+  }
+
+  async function loadAds(filter = {}) {
+    const container = document.getElementById('adsContainer');
+    container.innerHTML = '<div class="loading">Loading ads...</div>';
+    let query = db.from('ads').select('*').order('id', { ascending: false });
+    if (filter.category) query = query.eq('category', filter.category);
+    if (filter.search) query = query.ilike('title', `%${filter.search}%`);
+    const { data, error } = await query;
+    if (error || !data || data.length === 0) {
+      container.innerHTML = '<div class="no-ads">No ads yet — be the first to post! 🎉</div>';
+      return;
+    }
+    container.innerHTML = data.map(ad => `
+      <div class="ad-card">
+        <div class="ad-img">${catIcons[ad.category] || '📦'}</div>
+        <div class="ad-body">
+          <div class="ad-price">₹${Number(ad.price).toLocaleString('en-IN')}</div>
+          <div class="ad-title">${ad.title}</div>
+          <div class="ad-meta">${ad.location}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  window.postAd = async function() {
+    const title    = document.getElementById('adTitle').value.trim();
+    const desc     = document.getElementById('adDesc').value.trim();
+    const price    = document.getElementById('adPrice').value.trim();
+    const category = document.getElementById('adCategory').value;
+    const location = document.getElementById('adLocation').value.trim();
+    const phone    = document.getElementById('adPhone').value.trim();
+    if (!title || !desc || !price || !category || !location || !phone) { alert('Please fill all fields!'); return; }
+    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, phone }]);
+    if (error) {
+      document.getElementById('errorMsg').style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    } else {
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+      ['adTitle','adDesc','adPrice','adLocation','adPhone'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('adCategory').value = '';
+    }
+  }
+
+  window.searchAds = function() {
+    const q = document.getElementById('searchInput').value.trim();
+    document.getElementById('adsHeading').textContent = q ? `Results for "${q}"` : 'Fresh Ads';
+    loadAds(q ? { search: q } : {});
+  }
+
+  window.filterCategory = function(cat) {
+    document.getElementById('adsHeading').textContent = cat + ' Ads';
+    loadAds({ category: cat });
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.searchAds();
+  });
+
+  loadAds();
+</script>
+</body>
+</html>
