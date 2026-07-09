@@ -33,8 +33,8 @@
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .section-header h2 { font-size: 15px; font-weight: 600; }
   .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
-  .ad-card { background: #fff; border: 1px solid #eee; border-radius: 10px; overflow: hidden; cursor: pointer; }
-  .ad-card:hover { border-color: #002F34; }
+  .ad-card { background: #fff; border: 1px solid #eee; border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.15s; }
+  .ad-card:hover { border-color: #002F34; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
   .ad-img { width: 100%; height: 110px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 38px; }
   .ad-body { padding: 8px 10px 10px; }
   .ad-price { font-size: 15px; font-weight: 700; color: #222; }
@@ -42,6 +42,8 @@
   .ad-meta { font-size: 11px; color: #999; }
   .no-ads { text-align: center; padding: 40px; color: #999; font-size: 14px; }
   .loading { text-align: center; padding: 30px; color: #999; font-size: 14px; }
+
+  /* POST AD FORM */
   .form-page { max-width: 560px; margin: 20px auto; background: #fff; border-radius: 12px; padding: 24px; }
   .form-page h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #002F34; }
   .form-group { margin-bottom: 14px; }
@@ -53,9 +55,36 @@
   .submit-btn:hover { background: #004D4A; }
   .success-msg { background: #e1f5ee; color: #085041; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; display: none; }
   .error-msg { background: #fcebeb; color: #a32d2d; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; display: none; }
+  .back-btn { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; background: #fff; cursor: pointer; font-size: 14px; margin-top: 10px; }
+
+  /* AD DETAIL PAGE */
+  .detail-page { max-width: 680px; margin: 20px auto; padding: 0 16px 30px; }
+  .detail-back { display: flex; align-items: center; gap: 6px; color: #002F34; font-size: 14px; cursor: pointer; margin-bottom: 14px; font-weight: 600; }
+  .detail-img-box { width: 100%; height: 220px; background: #f0f0f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 80px; margin-bottom: 16px; }
+  .detail-card { background: #fff; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #eee; }
+  .detail-price { font-size: 26px; font-weight: 700; color: #002F34; margin-bottom: 4px; }
+  .detail-title { font-size: 17px; font-weight: 600; color: #222; margin-bottom: 8px; }
+  .detail-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+  .badge-cat { background: #e1f5ee; color: #085041; }
+  .badge-loc { background: #eeedfe; color: #3C3489; }
+  .detail-desc-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px; }
+  .detail-desc { font-size: 14px; color: #555; line-height: 1.6; }
+  .detail-date { font-size: 12px; color: #999; margin-top: 10px; }
+  .seller-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #eee; }
+  .seller-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px; }
+  .seller-info { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .seller-avatar { width: 48px; height: 48px; border-radius: 50%; background: #002F34; display: flex; align-items: center; justify-content: center; color: #23E5DB; font-size: 20px; font-weight: 700; }
+  .seller-name { font-size: 15px; font-weight: 600; color: #222; }
+  .seller-tag { font-size: 12px; color: #999; }
+  .call-btn { width: 100%; background: #002F34; color: #23E5DB; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .call-btn:hover { background: #004D4A; }
+  .whatsapp-btn { width: 100%; background: #25D366; color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .whatsapp-btn:hover { background: #1da851; }
+  .phone-reveal { background: #f0fafa; border: 1px dashed #23E5DB; border-radius: 8px; padding: 12px; text-align: center; font-size: 18px; font-weight: 700; color: #002F34; margin-bottom: 8px; display: none; }
+
   .footer { background: #002F34; color: #9ab; padding: 14px 20px; text-align: center; font-size: 12px; margin-top: 20px; }
   .footer a { color: #23E5DB; margin: 0 8px; text-decoration: none; }
-  .back-btn { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; background:#fff; cursor:pointer; font-size:14px; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -133,11 +162,47 @@
       <input type="text" id="adLocation" placeholder="e.g. Hyderabad" />
     </div>
     <div class="form-group">
+      <label>Your Name *</label>
+      <input type="text" id="adName" placeholder="e.g. Ravi Kumar" />
+    </div>
+    <div class="form-group">
       <label>Mobile Number *</label>
       <input type="tel" id="adPhone" placeholder="+91 9876543210" />
     </div>
     <button class="submit-btn" onclick="postAd()">Post Ad Free →</button>
     <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+  </div>
+</div>
+
+<!-- AD DETAIL PAGE -->
+<div id="detail" class="page">
+  <div class="detail-page">
+    <div class="detail-back" onclick="showPage('home')">← Back to listings</div>
+    <div class="detail-img-box" id="detailImg">📦</div>
+    <div class="detail-card">
+      <div class="detail-price" id="detailPrice">₹0</div>
+      <div class="detail-title" id="detailTitle">Ad Title</div>
+      <div class="detail-badges">
+        <span class="badge badge-cat" id="detailCategory">Category</span>
+        <span class="badge badge-loc" id="detailLocation">📍 Location</span>
+      </div>
+      <div class="detail-desc-title">Description</div>
+      <div class="detail-desc" id="detailDesc">Description here...</div>
+      <div class="detail-date" id="detailDate"></div>
+    </div>
+    <div class="seller-card">
+      <div class="seller-title">Seller Information</div>
+      <div class="seller-info">
+        <div class="seller-avatar" id="sellerAvatar">👤</div>
+        <div>
+          <div class="seller-name" id="sellerName">Seller</div>
+          <div class="seller-tag">AOE Member</div>
+        </div>
+      </div>
+      <div class="phone-reveal" id="phoneReveal">📞 Loading...</div>
+      <button class="call-btn" onclick="revealPhone()">📞 Show Phone Number</button>
+      <button class="whatsapp-btn" id="whatsappBtn">💬 Chat on WhatsApp</button>
+    </div>
   </div>
 </div>
 
@@ -149,16 +214,13 @@
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-  // ============================
-  // PASTE YOUR NEW KEY BELOW 👇
-  // ============================
   const SUPABASE_URL = 'https://xcrowpltqhlfgqgmbyoj.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_hzYBzBll2swU8OWH-NIpkA_aG8q2Qky';
-  // ============================
-
+  const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY_HERE';
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const catIcons = { Cars:'🚗', Mobiles:'📱', Property:'🏠', Jobs:'💼', Bikes:'🛵', Electronics:'📺', Furniture:'🛋️', Fashion:'👗' };
+
+  let currentAd = null;
 
   window.showPage = function(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -167,19 +229,46 @@
     window.scrollTo(0, 0);
   }
 
+  window.openAdDetail = function(ad) {
+    currentAd = ad;
+    const icon = catIcons[ad.category] || '📦';
+    document.getElementById('detailImg').textContent = icon;
+    document.getElementById('detailPrice').textContent = '₹' + Number(ad.price).toLocaleString('en-IN');
+    document.getElementById('detailTitle').textContent = ad.title;
+    document.getElementById('detailCategory').textContent = ad.category;
+    document.getElementById('detailLocation').textContent = '📍 ' + ad.location;
+    document.getElementById('detailDesc').textContent = ad.description || 'No description provided.';
+    document.getElementById('sellerName').textContent = ad.name || 'AOE Seller';
+    document.getElementById('sellerAvatar').textContent = (ad.name || 'S')[0].toUpperCase();
+    document.getElementById('phoneReveal').style.display = 'none';
+    document.getElementById('detailDate').textContent = '📅 Posted: ' + new Date(ad.created_at).toLocaleDateString('en-IN');
+    document.getElementById('whatsappBtn').onclick = function() {
+      const msg = encodeURIComponent('Hi! I saw your ad on AOE: ' + ad.title + ' for ₹' + Number(ad.price).toLocaleString('en-IN'));
+      window.open('https://wa.me/' + (ad.phone || '').replace(/\D/g,'') + '?text=' + msg, '_blank');
+    };
+    showPage('detail');
+  }
+
+  window.revealPhone = function() {
+    if (currentAd) {
+      document.getElementById('phoneReveal').textContent = '📞 ' + (currentAd.phone || 'Not provided');
+      document.getElementById('phoneReveal').style.display = 'block';
+    }
+  }
+
   async function loadAds(filter = {}) {
     const container = document.getElementById('adsContainer');
     container.innerHTML = '<div class="loading">Loading ads...</div>';
     let query = db.from('ads').select('*').order('id', { ascending: false });
     if (filter.category) query = query.eq('category', filter.category);
-    if (filter.search) query = query.ilike('title', `%${filter.search}%`);
+    if (filter.search) query = query.ilike('title', '%' + filter.search + '%');
     const { data, error } = await query;
     if (error || !data || data.length === 0) {
       container.innerHTML = '<div class="no-ads">No ads yet — be the first to post! 🎉</div>';
       return;
     }
     container.innerHTML = data.map(ad => `
-      <div class="ad-card">
+      <div class="ad-card" onclick="openAdDetail(${JSON.stringify(ad).replace(/"/g, '&quot;')})">
         <div class="ad-img">${catIcons[ad.category] || '📦'}</div>
         <div class="ad-body">
           <div class="ad-price">₹${Number(ad.price).toLocaleString('en-IN')}</div>
@@ -195,23 +284,24 @@
     const price    = document.getElementById('adPrice').value.trim();
     const category = document.getElementById('adCategory').value;
     const location = document.getElementById('adLocation').value.trim();
+    const name     = document.getElementById('adName').value.trim();
     const phone    = document.getElementById('adPhone').value.trim();
-    if (!title || !desc || !price || !category || !location || !phone) { alert('Please fill all fields!'); return; }
-    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, phone }]);
+    if (!title || !desc || !price || !category || !location || !name || !phone) { alert('Please fill all fields!'); return; }
+    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, name, phone }]);
     if (error) {
       document.getElementById('errorMsg').style.display = 'block';
       document.getElementById('successMsg').style.display = 'none';
     } else {
       document.getElementById('successMsg').style.display = 'block';
       document.getElementById('errorMsg').style.display = 'none';
-      ['adTitle','adDesc','adPrice','adLocation','adPhone'].forEach(id => document.getElementById(id).value = '');
+      ['adTitle','adDesc','adPrice','adLocation','adName','adPhone'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('adCategory').value = '';
     }
   }
 
   window.searchAds = function() {
     const q = document.getElementById('searchInput').value.trim();
-    document.getElementById('adsHeading').textContent = q ? `Results for "${q}"` : 'Fresh Ads';
+    document.getElementById('adsHeading').textContent = q ? 'Results for "' + q + '"' : 'Fresh Ads';
     loadAds(q ? { search: q } : {});
   }
 
