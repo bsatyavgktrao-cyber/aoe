@@ -278,7 +278,7 @@
       </div>`).join('');
   }
 
-  window.postAd = async function() {
+ window.postAd = async function() {
     const title    = document.getElementById('adTitle').value.trim();
     const desc     = document.getElementById('adDesc').value.trim();
     const price    = document.getElementById('adPrice').value.trim();
@@ -286,8 +286,23 @@
     const location = document.getElementById('adLocation').value.trim();
     const name     = document.getElementById('adName').value.trim();
     const phone    = document.getElementById('adPhone').value.trim();
+    const imageFile = document.getElementById('adImage').files[0];
     if (!title || !desc || !price || !category || !location || !name || !phone) { alert('Please fill all fields!'); return; }
-    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, name, phone }]);
+
+    let image_url = null;
+    if (imageFile) {
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + fileExt;
+      const { error: uploadError } = await db.storage.from('ad-images').upload(fileName, imageFile);
+      if (uploadError) {
+        alert('Image upload failed: ' + uploadError.message);
+        return;
+      }
+      const { data: urlData } = db.storage.from('ad-images').getPublicUrl(fileName);
+      image_url = urlData.publicUrl;
+    }
+
+    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, name, phone, image_url }]);
     if (error) {
       document.getElementById('errorMsg').style.display = 'block';
       document.getElementById('successMsg').style.display = 'none';
@@ -296,6 +311,7 @@
       document.getElementById('errorMsg').style.display = 'none';
       ['adTitle','adDesc','adPrice','adLocation','adName','adPhone'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('adCategory').value = '';
+      document.getElementById('adImage').value = '';
     }
   }
 
