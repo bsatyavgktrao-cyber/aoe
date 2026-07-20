@@ -342,6 +342,7 @@ let currentUser = null;
       const msg = encodeURIComponent('Hi! I saw your ad on AOE: ' + ad.title + ' for ₹' + Number(ad.price).toLocaleString('en-IN'));
       window.open('https://wa.me/' + (ad.phone || '').replace(/\D/g,'') + '?text=' + msg, '_blank');
     };
+   document.getElementById('ownerActions').style.display = (currentUser && ad.user_id === currentUser.id) ? 'flex' : 'none';
     showPage('detail');
   }
 
