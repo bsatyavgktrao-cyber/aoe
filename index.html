@@ -345,7 +345,54 @@ let currentUser = null;
    document.getElementById('ownerActions').style.display = (currentUser && ad.user_id === currentUser.id) ? 'flex' : 'none';
     showPage('detail');
   }
+window.deleteAd = async function() {
+    if (!currentAd) return;
+    if (!confirm('Are you sure you want to delete this ad? This cannot be undone.')) return;
+    const { error } = await db.from('ads').delete().eq('id', currentAd.id);
+    if (error) {
+      alert('Delete failed: ' + error.message);
+    } else {
+      alert('Ad deleted successfully!');
+      showPage('home');
+    }
+  }
 
+  window.editAd = function() {
+    if (!currentAd) return;
+    showPage('post');
+    document.getElementById('adCategory').value = currentAd.category;
+    document.getElementById('adTitle').value = currentAd.title;
+    document.getElementById('adDesc').value = currentAd.description || '';
+    document.getElementById('adPrice').value = currentAd.price;
+    document.getElementById('adLocation').value = currentAd.location;
+    document.getElementById('adName').value = currentAd.name;
+    document.getElementById('adPhone').value = currentAd.phone;
+    document.querySelector('.form-page h2').textContent = '✏️ Edit Your Ad';
+    document.querySelector('.submit-btn').textContent = 'Update Ad →';
+    document.querySelector('.submit-btn').setAttribute('onclick', 'updateAd()');
+  }
+
+  window.updateAd = async function() {
+    const title    = document.getElementById('adTitle').value.trim();
+    const desc     = document.getElementById('adDesc').value.trim();
+    const price    = document.getElementById('adPrice').value.trim();
+    const category = document.getElementById('adCategory').value;
+    const location = document.getElementById('adLocation').value.trim();
+    const name     = document.getElementById('adName').value.trim();
+    const phone    = document.getElementById('adPhone').value.trim();
+    if (!title || !desc || !price || !category || !location || !name || !phone) { alert('Please fill all fields!'); return; }
+
+    const { error } = await db.from('ads').update({ title, description: desc, price: Number(price), category, location, name, phone }).eq('id', currentAd.id);
+    if (error) {
+      alert('Update failed: ' + error.message);
+    } else {
+      alert('Ad updated successfully!');
+      document.querySelector('.form-page h2').textContent = '📢 Post Your Ad — Free!';
+      document.querySelector('.submit-btn').textContent = 'Post Ad Free →';
+      document.querySelector('.submit-btn').setAttribute('onclick', 'postAd()');
+      showPage('home');
+    }
+  }
   window.revealPhone = function() {
     if (currentAd) {
       document.getElementById('phoneReveal').textContent = '📞 ' + (currentAd.phone || 'Not provided');
