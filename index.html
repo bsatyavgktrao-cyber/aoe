@@ -380,7 +380,7 @@ let currentUser = null;
     const phone    = document.getElementById('adPhone').value.trim();
     const imageFile = document.getElementById('adImage').files[0];
     if (!title || !desc || !price || !category || !location || !name || !phone) { alert('Please fill all fields!'); return; }
-
+if (!currentUser) { alert('Please login first to post an ad!'); showPage('auth'); return; }
     let image_url = null;
     if (imageFile) {
       const fileExt = imageFile.name.split('.').pop();
@@ -394,7 +394,7 @@ let currentUser = null;
       image_url = urlData.publicUrl;
     }
 
-    const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, name, phone, image_url }]);
+   const { error } = await db.from('ads').insert([{ title, description: desc, price: Number(price), category, location, name, phone, image_url, user_id: currentUser.id }]);
     if (error) {
       document.getElementById('errorMsg').style.display = 'block';
       document.getElementById('successMsg').style.display = 'none';
