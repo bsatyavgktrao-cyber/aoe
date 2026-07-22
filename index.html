@@ -357,6 +357,7 @@ let currentUser = null;
       window.open('https://wa.me/' + (ad.phone || '').replace(/\D/g,'') + '?text=' + msg, '_blank');
     };
    document.getElementById('ownerActions').style.display = (currentUser && ad.user_id === currentUser.id) ? 'flex' : 'none';
+   checkWishlistStatus(ad.id);
     showPage('detail');
   }
 window.deleteAd = async function() {
