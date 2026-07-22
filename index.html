@@ -407,6 +407,53 @@ window.deleteAd = async function() {
       showPage('home');
     }
   }
+ window.toggleWishlist = async function() {
+    if (!currentUser) { alert('Please login first to save ads!'); showPage('auth'); return; }
+    if (!currentAd) return;
+    const { data: existing } = await db.from('wishlist').select('id').eq('user_id', currentUser.id).eq('ad_id', currentAd.id).maybeSingle();
+    if (existing) {
+      await db.from('wishlist').delete().eq('id', existing.id);
+      document.getElementById('wishlistBtn').textContent = '🤍 Save to Wishlist';
+    } else {
+      await db.from('wishlist').insert([{ user_id: currentUser.id, ad_id: currentAd.id }]);
+      document.getElementById('wishlistBtn').textContent = '❤️ Saved to Wishlist';
+    }
+  }
+
+  async function checkWishlistStatus(adId) {
+    if (!currentUser) return;
+    const { data } = await db.from('wishlist').select('id').eq('user_id', currentUser.id).eq('ad_id', adId).maybeSingle();
+    document.getElementById('wishlistBtn').textContent = data ? '❤️ Saved to Wishlist' : '🤍 Save to Wishlist';
+  }
+
+  window.loadWishlist = async function() {
+    const container = document.getElementById('wishlistContainer');
+    container.innerHTML = '<div class="loading">Loading wishlist...</div>';
+    if (!currentUser) {
+      container.innerHTML = '<div class="no-ads">Please login to see your wishlist.</div>';
+      return;
+    }
+    const { data: wishData, error: wishError } = await db.from('wishlist').select('ad_id').eq('user_id', currentUser.id);
+    if (wishError || !wishData || wishData.length === 0) {
+      container.innerHTML = '<div class="no-ads">No saved ads yet — tap 🤍 on any ad to save it here!</div>';
+      return;
+    }
+    const adIds = wishData.map(w => w.ad_id);
+    const { data: ads, error: adsError } = await db.from('ads').select('*').in('id', adIds);
+    if (adsError || !ads || ads.length === 0) {
+      container.innerHTML = '<div class="no-ads">No saved ads yet.</div>';
+      return;
+    }
+    container.innerHTML = ads.map(ad => `
+      <div class="ad-card" onclick="openAdDetail(${JSON.stringify(ad).replace(/"/g, '&quot;')})">
+        <div class="ad-img">${ad.image_url ? '<img src="' + ad.image_url + '" style="width:100%;height:100%;object-fit:cover;">' : (catIcons[ad.category] || '📦')}</div>
+        <div class="ad-body">
+          <div class="ad-price">₹${Number(ad.price).toLocaleString('en-IN')}</div>
+          <div class="ad-title">${ad.title}</div>
+          <div class="ad-meta">${ad.location}</div>
+        </div>
+      </div>`).join('');
+  }
   window.revealPhone = function() {
     if (currentAd) {
       document.getElementById('phoneReveal').textContent = '📞 ' + (currentAd.phone || 'Not provided');
