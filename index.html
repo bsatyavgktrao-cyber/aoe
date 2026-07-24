@@ -332,7 +332,7 @@ let currentUser = null;
   });
   const catIcons = { Cars:'🚗', Mobiles:'📱', Property:'🏠', Jobs:'💼', Bikes:'🛵', Electronics:'📺', Furniture:'🛋️', Fashion:'👗' };
 
-  let currentAd = null;
+  let currentAd = null;let currentFilter = {};
 
   window.showPage = function(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -468,6 +468,7 @@ window.deleteAd = async function() {
   }
 
   async function loadAds(filter = {}) {
+   currentFilter = filter;
     const container = document.getElementById('adsContainer');
     container.innerHTML = '<div class="loading">Loading ads...</div>';
     let query = db.from('ads').select('*').order('id', { ascending: false });
@@ -534,9 +535,10 @@ if (!currentUser) { alert('Please login first to post an ad!'); showPage('auth')
     loadAds(q ? { search: q } : {});
   }
 window.applyPriceFilter = function() {
+   
     const min = document.getElementById('minPrice').value;
     const max = document.getElementById('maxPrice').value;
-    loadAds({ minPrice: min ? Number(min) : null, maxPrice: max ? Number(max) : null });
+    loadAds({ ...currentFilter, minPrice: min ? Number(min) : null, maxPrice: max ? Number(max) : null });
   }
   window.filterCategory = function(cat) {
     document.getElementById('adsHeading').textContent = cat + ' Ads';
