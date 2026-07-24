@@ -473,6 +473,8 @@ window.deleteAd = async function() {
     let query = db.from('ads').select('*').order('id', { ascending: false });
     if (filter.category) query = query.eq('category', filter.category);
     if (filter.search) query = query.ilike('title', '%' + filter.search + '%');
+   if (filter.minPrice != null) query = query.gte('price', filter.minPrice);
+    if (filter.maxPrice != null) query = query.lte('price', filter.maxPrice);
     const { data, error } = await query;
     if (error || !data || data.length === 0) {
       container.innerHTML = '<div class="no-ads">No ads yet — be the first to post! 🎉</div>';
