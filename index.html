@@ -531,7 +531,11 @@ if (!currentUser) { alert('Please login first to post an ad!'); showPage('auth')
     document.getElementById('adsHeading').textContent = q ? 'Results for "' + q + '"' : 'Fresh Ads';
     loadAds(q ? { search: q } : {});
   }
-
+window.applyPriceFilter = function() {
+    const min = document.getElementById('minPrice').value;
+    const max = document.getElementById('maxPrice').value;
+    loadAds({ minPrice: min ? Number(min) : null, maxPrice: max ? Number(max) : null });
+  }
   window.filterCategory = function(cat) {
     document.getElementById('adsHeading').textContent = cat + ' Ads';
     loadAds({ category: cat });
